@@ -24,15 +24,4 @@ const LogSchema = new mongoose.Schema({
         default: Date.now
     }
 });
-// const mongoose = require('mongoose');
-
-// const LogSchema = new mongoose.Schema({
-//     type: String,    // Event type (e.g., "OTP", "Access")
-//     details: String, // Detailed information about the event
-//     timestamp: {
-//         type: Date,
-//         default: Date.now
-//     }
-// });
-
 module.exports = mongoose.model('Log', LogSchema);
