@@ -9,9 +9,9 @@ const {
   createDeliverySchedule,
   adjustSchedule,
   manageUserAccount,
-} = require('../controllers/adminController'); // Ensure all necessary functions are imported
+} = require('../controllers/adminController'); 
 
-const { checkAdmin } = require('../middleware/auth'); // Middleware for role-based access
+const { checkAdmin } = require('../middleware/auth'); 
 
 const router = express.Router();
 
@@ -27,14 +27,13 @@ router.post('/otp/generate', checkAdmin, generateOTPController); // Generate OTP
 router.post('/otp/validate', checkAdmin, validateOTPController); // Validate OTP
 router.post('/access', checkAdmin, validateAccess); // Role-based access validation
 router.put('/schedule/:deliveryId', checkAdmin, adjustSchedule); // Adjust delivery schedule
-router.post('/user/manage', checkAdmin, manageUserAccount); // Manage user account
 
-//route for adding new user
-const { addUser,addAdmin,login } = require('../controllers/adminController'); // Assuming this controller handles adding users
+//route for adding new entry in database
+const { addUser,addAdmin,login } = require('../controllers/adminController');
 router.post('/user/adduser',addUser);
 router.post('/user/addadmin',addAdmin);
 router.post('/login',login);
-router.post('/schedule/create', checkAdmin, createDeliverySchedule); // Create delivery schedule
+router.post('/schedule/create', checkAdmin, createDeliverySchedule);
 
 
 module.exports = router;
