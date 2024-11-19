@@ -1,17 +1,3 @@
-// // Middleware to check if the user has admin access
-// const checkAdmin = (req, res, next) => {
-//     console.log('checkAdmin middleware executed');
-//     const userRole = req.user?.role; // Assuming `req.user` is populated after authentication
-//     console.log('Role: ', userRole );
-//     if (userRole !== 'admin') {
-//         return res.status(403).json({ message: 'Access Denied: Admins Only' });
-//     }
-
-//     next();
-// };
-
-// module.exports = { checkAdmin };
-
 
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/admin'); // Assuming Admin model holds admin details
