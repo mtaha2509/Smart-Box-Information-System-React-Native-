@@ -1,12 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Login from './screens/loginpage';
 
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>IT IS SMART DELIEVERY BOX PROJECT's BOILER PLATE CODE.!!</Text>
+      <Login/>
       
       <StatusBar style="auto" />
     </View>
