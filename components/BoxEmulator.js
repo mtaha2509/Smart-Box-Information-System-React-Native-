@@ -8,6 +8,7 @@ const BoxEmulator = () => {
   const [large, setLarge] = useState('');
   const [status, setStatus] = useState([]);
   const [emulator, setEmulator] = useState(null);
+  const [eventLog, setEventLog] = useState([]); // To store event logs
 
   // Hardcoded OTPs and Schedule
   const adminOTP = '1234'; // Hardcoded admin OTP
@@ -26,13 +27,14 @@ const BoxEmulator = () => {
     const newEmulator = new SmartBoxEmulator(smallCount, mediumCount, largeCount);
     setEmulator(newEmulator);
     setStatus(newEmulator.getStatus());
+    setEventLog([]); // Reset logs on re-initialization
     setVerificationDisplayed(false); // Reset display on re-initialization
   };
 
   const isScheduleCorrect = () => {
-    const now = new Date(); // Get the current date and time
-    const scheduledDate = new Date(scheduledTime); // Convert scheduled time to a Date object
-    return now >= scheduledDate; // Check if current time is on or past the scheduled time
+    const now = new Date();
+    const scheduledDate = new Date(scheduledTime);
+    return now >= scheduledDate;
   };
 
   const verifyOTPAndSchedule = () => {
@@ -40,14 +42,15 @@ const BoxEmulator = () => {
     let otpMatch = adminOTP === userOTP;
     setScheduleVerified(scheduleCorrect);
     setOtpVerified(otpMatch);
-    setVerificationDisplayed(true); // Display verification results only after this function is called
+    setVerificationDisplayed(true);
 
     if (scheduleCorrect && otpMatch) {
-      Alert.alert("Access Granted", "The compartment will now open.");
-      updateCompartmentStatus(true); // This should trigger the compartment to open
+      updateCompartmentStatus(true); // Open the compartment
+      logEvent("Access granted, compartment opened.");
     } else {
       let errorMessage = !scheduleCorrect ? "Schedule not met." : "OTP mismatch.";
       Alert.alert("Access Denied", errorMessage);
+      logEvent(errorMessage); // Log the error event
     }
   };
 
@@ -55,7 +58,17 @@ const BoxEmulator = () => {
     if (emulator) {
       emulator.updateStatus(isOpen ? 'open' : 'closed');
       setStatus(emulator.getStatus());
+      logEvent(`Compartment status updated to ${isOpen ? 'open' : 'closed'}.`);
     }
+  };
+
+  const lockCompartment = () => {
+    updateCompartmentStatus(false); // Lock the compartment
+    logEvent("Compartment locked manually.");
+  };
+
+  const logEvent = (eventDescription) => {
+    setEventLog(prevLogs => [...prevLogs, `${new Date().toLocaleTimeString()}: ${eventDescription}`]);
   };
 
   return (
@@ -86,6 +99,7 @@ const BoxEmulator = () => {
 
       <Button title="Initialize Emulator" onPress={initializeEmulator} />
       <Button title="Verify Access" onPress={verifyOTPAndSchedule} color="green" />
+      <Button title="Lock Compartment" onPress={lockCompartment} color="red" />
 
       {verificationDisplayed && (
         <View>
@@ -111,6 +125,15 @@ const BoxEmulator = () => {
           />
         </View>
       )}
+
+      <View style={styles.logContainer}>
+        <Text style={styles.subtitle}>Event Log:</Text>
+        <FlatList
+          data={eventLog}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => <Text style={styles.logItem}>{item}</Text>}
+        />
+      </View>
     </View>
   );
 };
@@ -122,6 +145,8 @@ const styles = StyleSheet.create({
   statusContainer: { marginTop: 20 },
   subtitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 },
   statusItem: { fontSize: 16, paddingVertical: 5, marginBottom: 5 },
+  logContainer: { marginTop: 20 },
+  logItem: { fontSize: 14, paddingVertical: 2 },
 });
 
 export default BoxEmulator;
