@@ -77,21 +77,6 @@ exports.validateOTP = async (req, res) => {
 };
 
 const { logOTPEvent } = require('../utils/logger');
-
-// exports.generateOTP = async (deliveryId, userId) => {
-//     try {
-//         const otp = Math.floor(100000 + Math.random() * 900000);
-//         const expiry = new Date(Date.now() + 15 * 60 * 1000); // 15-minute expiry
-
-//         logOTPEvent('Generate', `Generated OTP for Delivery ID: ${deliveryId}, User ID: ${userId}`);
-        
-//         return { otp, expiry };
-//     } catch (err) {
-//         logOTPEvent('Error', `Failed to generate OTP: ${err.message}`);
-//         throw new Error('Failed to generate OTP');
-//     }
-// };
-
 const { validateGenerateOTPInput, validateOTPInput } = require('../utils/validator');
 
 // exports.generateOTP = async (deliveryId, userId) => {
@@ -100,8 +85,8 @@ const { validateGenerateOTPInput, validateOTPInput } = require('../utils/validat
 //     // Proceed with OTP generation logic...
 // };
 
-exports.validateOTP = async (otp, deliveryId, userId) => {
-    validateOTPInput(otp, deliveryId, userId);
+//exports.validateOTP = async (otp, deliveryId, userId) => {
+//   validateOTPInput(otp, deliveryId, userId);
 
     // Proceed with OTP validation logic...
-};
+//};
