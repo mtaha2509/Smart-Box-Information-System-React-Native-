@@ -1,7 +1,7 @@
-const Log = require('../models/log'); // Log model for activity logs
-const Admin = require('../models/admin'); // Admin model
+const Log = require('../models/log'); 
+const Admin = require('../models/admin'); 
 const User = require('../models/users');
-const DeliverySchedule = require('../models/schedule'); // Delivery schedule model
+const DeliverySchedule = require('../models/schedule'); 
 
 
 //temporary test route
@@ -39,7 +39,7 @@ const addUser = async (req, res) => {
 
 // //add new admin
 const addAdmin = async (req, res) => {
-    const {admin_id,email,role, status, logs } = req.body; // Extract admin data from the request body
+    const {admin_id,email,role, status, logs } = req.body;
 
     try {
         // Check if all required fields are provided
@@ -51,14 +51,12 @@ const addAdmin = async (req, res) => {
         if (!['admin', 'customer', 'rider'].includes(role)) {
             return res.status(400).json({ message: 'Invalid role. Role must be either "admin", "customer", or "rider".' });
         }
-
-        // Create a new admin using the data provided in the request body
         const newAdmin = new Admin({
             admin_id,
             email,
             role,
-            status: status || 'active', // Default to 'active' if no status is provided
-            logs: logs || [], // Default to an empty array if no logs are provided
+            status: status || 'active',
+            logs: logs || [], 
         });
 
         // Save the admin to the database
@@ -78,12 +76,11 @@ const login = async (req, res) => {
     const { email } = req.body;
 
     try {
-        // Check if email is provided
+        
         if (!email) {
             return res.status(400).json({ message: 'Email is required' });
         }
 
-        // Find the admin by email
         const admin = await Admin.findOne({ email });
 
         if (!admin) {
@@ -99,14 +96,12 @@ const login = async (req, res) => {
         const token = jwt.sign({ id: admin._id, role: admin.role }, process.env.JWT_SECRET, {
             expiresIn: '1h', // Token expires in 1 hour
         });
-
-        // Log the token generation (for debugging purposes)
         console.log('Generated token:', token);
 
         // Return the JWT token
         return res.status(200).json({
             message: 'Login successful',
-            token, // Send the token to the client
+            token,
         });
     } catch (error) {
         console.error(error);
@@ -208,18 +203,14 @@ const viewLogs = async (req, res) => {
 };
 
 
-const crypto = require('crypto'); // For secure OTP generation
-//const Admin = require('../models/admin');
-
-
-
+const crypto = require('crypto'); // For OTP generation
 // Validate Role-Based Access Control (RBAC)
 const validateAccess = async (req, res) => {
     const { role, action } = req.body;
     
     try {
         // Check if the user has the required role for the action
-        const user = req.user;  // Assuming user info is extracted from JWT token
+        const user = req.user;
 
         // Define allowed actions for each role
         const permissions = {
@@ -232,16 +223,13 @@ const validateAccess = async (req, res) => {
         if (!permissions[user.role] || !permissions[user.role].includes(action)) {
             return res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
         }
-
-        // Log the access validation
         const logEntry = {
             type: 'Access Control',
             message: `Access granted to ${user.role} for ${action} action.`,
             timestamp: new Date(),
         };
 
-        // Save log entry to the database (for auditing)
-        // Assume we have a Log model to save access logs
+        // Save log entry to the database
         const newLog = new Log(logEntry);
         await newLog.save();
 
@@ -259,7 +247,7 @@ const createDeliverySchedule = async (req, res) => {
 
     try {
         // Validate if rider is available (integrating with Module 1's rider availability API)
-        const isRiderAvailable = true; // Dummy value, replace with your test scenario
+        const isRiderAvailable = true; // Dummy value
         const rider = await schedule.findOne({ rider_id });
         // if (!rider || !isRiderAvailable) {
         //     return res.status(400).json({ message: 'Rider not available' });
@@ -333,34 +321,6 @@ const adjustSchedule = async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
-
-// adminController.js
-// Suspend or delete user accounts
-const manageUserAccount = async (req, res) => {
-    const { action, user_id } = req.body;
-
-    try {
-        const user = await User.findById(user_id);
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        if (action === 'suspend') {
-            user.status = 'suspended';
-        } else if (action === 'delete') {
-            await user.remove();
-            return res.status(200).json({ message: 'User deleted successfully' });
-        }
-
-        await user.save();
-        res.status(200).json({ message: `User ${action}ed successfully` });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error', error });
-    }
-};
-
 // Log events
 const logEvent = async (req, res) => {
     const { event_type, details } = req.body;
@@ -379,28 +339,7 @@ const logEvent = async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
-
-
-// authMiddleware.js
 const jwt = require('jsonwebtoken');
-
-module.exports.checkAdmin = (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];  // Extract token from authorization header
-    if (!token) return res.status(403).json({ message: 'No token provided' });
-
-    jwt.verify(token, 'your-secret-key', (err, decoded) => {
-        if (err) return res.status(403).json({ message: 'Invalid or expired token' });
-        
-        if (decoded.role !== 'admin') {
-            return res.status(403).json({ message: 'Access denied' });
-        }
-
-        req.user = decoded;
-        next();
-    });
-};
-
-
 const { generateOTP, validateOTP } = require('../services/otpService');
 const { info, error } = require('../utils/logger');
 const schedule = require('../models/schedule');
@@ -444,11 +383,13 @@ const validateOTPController = async (req, res) => {
 module.exports = {
     suspendAccount,
     addLog,
-    viewLogs, // Ensure this is exported
+    viewLogs,
     generateOTPController,
     validateOTPController,
     validateAccess,
     createDeliverySchedule,
     adjustSchedule,
-    manageUserAccount,addAdmin,addUser,login
+    manageUserAccount
 };
+//Only to add new data in database 
+//modules.exports={addAdmin,addUser,login};
