@@ -1,4 +1,3 @@
-// accessControlService.js
 const RolePermissions = require('../models/RolePermissions');
 
 // Validate if the user has access based on their role and requested action
