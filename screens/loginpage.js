@@ -36,7 +36,7 @@ const Login = ({ navigation }) => {
                     <Text style={{
                         fontSize: 16,
                         color: COLORS.black
-                    }}>Let's get the parcel delivered</Text>
+                    }}>Parcel delivered, efficiently!</Text>
                 </View>
 
                 <View style={{ marginBottom: 12 }}>
@@ -148,7 +148,9 @@ const Login = ({ navigation }) => {
                 }}>
                     <Text style={{ fontSize: 16, color: COLORS.black }}>Don't have an account ? </Text>
                     <Pressable
-                        onPress={()=> console.log("Will handle later")}
+                        onPress={() => {
+                            navigation.navigate('Signup');  // Navigate to SignUp page
+                          }}
                     >
                         <Text style={{
                             fontSize: 16,
