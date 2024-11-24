@@ -5,14 +5,33 @@ export default class SmartBoxEmulator {
   
       // Initialize compartments
       for (let i = 0; i < small; i++) {
-        this.compartments.push({ id: `S-${i + 1}`, size: 'small', occupied: false, locked: true });
-      }
-      for (let i = 0; i < medium; i++) {
-        this.compartments.push({ id: `M-${i + 1}`, size: 'medium', occupied: false, locked: true });
-      }
-      for (let i = 0; i < large; i++) {
-        this.compartments.push({ id: `L-${i + 1}`, size: 'large', occupied: false, locked: true });
-      }
+        this.compartments.push({ 
+            id: `S-${i + 1}`, 
+            size: 'small', 
+            occupied: false, 
+            locked: true, 
+            color: 'blue' // Initially blue
+        });
+    }
+    for (let i = 0; i < medium; i++) {
+        this.compartments.push({ 
+            id: `M-${i + 1}`, 
+            size: 'medium', 
+            occupied: false, 
+            locked: true, 
+            color: 'blue' // Initially blue
+        });
+    }
+    for (let i = 0; i < large; i++) {
+        this.compartments.push({ 
+            id: `L-${i + 1}`, 
+            size: 'large', 
+            occupied: false, 
+            locked: true, 
+            color: 'blue' // Initially blue
+        });
+    }
+    
     }
   
     // Get compartment status
