@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, FlatList, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, FlatList, Alert, ScrollView } from 'react-native';
 import SmartBoxEmulator from '../classes/SmartBoxEmulatorClass';
 
 const BoxEmulator = () => {
@@ -8,49 +8,75 @@ const BoxEmulator = () => {
   const [large, setLarge] = useState('');
   const [status, setStatus] = useState([]);
   const [emulator, setEmulator] = useState(null);
-  const [eventLog, setEventLog] = useState([]); // To store event logs
-
-  // Hardcoded OTPs and Schedule
-  const adminOTP = '1234'; // Hardcoded admin OTP
-  const userOTP = '1234';  // Hardcoded user OTP
-  const scheduledTime = '2023-10-10T15:00:00Z'; // Hardcoded schedule as an ISO string
+  const [adminOTP, setAdminOTP] = useState('1234'); // Default to hardcoded value
+  const [userOTP, setUserOTP] = useState('1234');  // Default to hardcoded value
+  const [eventLog, setEventLog] = useState([]);
 
   const [scheduleVerified, setScheduleVerified] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [verificationDisplayed, setVerificationDisplayed] = useState(false);
 
-  const initializeEmulator = () => {
-    const smallCount = parseInt(small) || 0;
-    const mediumCount = parseInt(medium) || 0;
-    const largeCount = parseInt(large) || 0;
+  const scheduledTime = '2023-10-10T15:00:00Z'; // Hardcoded schedule as an ISO string
 
-    const newEmulator = new SmartBoxEmulator(smallCount, mediumCount, largeCount);
-    setEmulator(newEmulator);
-    setStatus(newEmulator.getStatus());
-    setEventLog([]); // Reset logs on re-initialization
-    setVerificationDisplayed(false); // Reset display on re-initialization
+  const initializeEmulator = () => {
+    try {
+      if (!small || !medium || !large) {
+        throw new Error('Please enter values for all compartment sizes.');
+      }
+
+      const smallCount = parseInt(small) || 0;
+      const mediumCount = parseInt(medium) || 0;
+      const largeCount = parseInt(large) || 0;
+
+      if (smallCount === 0 && mediumCount === 0 && largeCount === 0) {
+        throw new Error('Compartment sizes cannot all be zero.');
+      }
+
+      const newEmulator = new SmartBoxEmulator(smallCount, mediumCount, largeCount);
+      setEmulator(newEmulator);
+      setStatus(newEmulator.getStatus());
+      setEventLog([]); // Reset logs on re-initialization
+      setVerificationDisplayed(false); // Reset display on re-initialization
+      Alert.alert('Success', 'Emulator initialized successfully.');
+    } catch (error) {
+      console.error('Initialization Error:', error.message);
+      Alert.alert('Error', error.message);
+    }
   };
 
   const isScheduleCorrect = () => {
-    const now = new Date();
+    const now = new Date('2023-10-10T15:00:00Z');
     const scheduledDate = new Date(scheduledTime);
     return now >= scheduledDate;
   };
 
   const verifyOTPAndSchedule = () => {
-    let scheduleCorrect = isScheduleCorrect();
-    let otpMatch = adminOTP === userOTP;
-    setScheduleVerified(scheduleCorrect);
-    setOtpVerified(otpMatch);
-    setVerificationDisplayed(true);
+    try {
+      if (!adminOTP || !userOTP) {
+        throw new Error('Please enter both Admin and User OTPs.');
+      }
 
-    if (scheduleCorrect && otpMatch) {
-      updateCompartmentStatus(true); // Open the compartment
-      logEvent("Access granted, compartment opened.");
-    } else {
-      let errorMessage = !scheduleCorrect ? "Schedule not met." : "OTP mismatch.";
-      Alert.alert("Access Denied", errorMessage);
-      logEvent(errorMessage); // Log the error event
+      let scheduleCorrect = isScheduleCorrect();
+      if (!scheduleCorrect) {
+        throw new Error('Attempt to access before the scheduled time.');
+      }
+
+      if (adminOTP !== userOTP) {
+        throw new Error('OTP mismatch detected.');
+      }
+
+      setScheduleVerified(scheduleCorrect);
+      setOtpVerified(true);
+      setVerificationDisplayed(true);
+
+      if (scheduleCorrect && adminOTP === userOTP) {
+        updateCompartmentStatus(true); // Open the compartment
+        logEvent("Access granted, compartment opened.");
+      }
+    } catch (error) {
+      console.error('Verification Error:', error.message);
+      Alert.alert('Error', error.message);
+      logEvent(error.message); // Log the error event
     }
   };
 
@@ -72,6 +98,9 @@ const BoxEmulator = () => {
   };
 
   return (
+     <ScrollView style={styles.container}>
+      
+     
     <View style={styles.container}>
       <Text style={styles.title}>Smart Box Emulator Setup</Text>
 
@@ -135,6 +164,7 @@ const BoxEmulator = () => {
         />
       </View>
     </View>
+    </ScrollView>
   );
 };
 
