@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const db = require("./config/mongooseConnection");
 app.use(express.json());
-
+require("dotenv").config();
 const User = require("./models/userModel");
 const Order = require("./models/orderModel");
 const Log = require("./models/logModel");
@@ -199,3 +199,6 @@ app.post("/finalize-order", async (req, res) => {
       .json({ error: "An internal server error occurred. Please try again." });
   }
 });
+
+
+app.listen(process.env.port);
