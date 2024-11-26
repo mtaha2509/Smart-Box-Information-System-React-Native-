@@ -36,7 +36,7 @@ async function checkUserAndOrder(userId, orderId) {
 
 
 //This API will receive user_id , will generate a otp and store it in the logs , then the response will be sent to user with OTP
-app.post("/generate-opt", async (req, res) => {
+app.post("/generate-otp", async (req, res) => {
   const { client_id, order_id } = req.body;
   const validationResult = await checkUserAndOrder(client_id, order_id);
   if (validationResult.valid) {
