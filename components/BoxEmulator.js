@@ -11,71 +11,57 @@ const BoxEmulator = () => {
   const [adminOTP, setAdminOTP] = useState('');
   const [userOTP, setUserOTP] = useState('');
 
-  // Initialize Emulator with Hardcoded Exception
+  // Initialize Emulator
   const initializeEmulator = () => {
     try {
       if (!small || !medium || !large) {
         throw new Error('Please enter values for all compartment sizes.');
       }
-
+      
       const smallCount = parseInt(small) || 0;
       const mediumCount = parseInt(medium) || 0;
       const largeCount = parseInt(large) || 0;
 
-      if (smallCount === 0 && mediumCount === 0 && largeCount === 0) {
-        throw new Error('Compartment sizes cannot all be zero.');
-      }
-
       const newEmulator = new SmartBoxEmulator(smallCount, mediumCount, largeCount);
       setEmulator(newEmulator);
       setStatus(newEmulator.getStatus());
-
       Alert.alert('Success', 'Emulator initialized successfully.');
     } catch (error) {
-      console.error('Initialization Error:', error.message);
       Alert.alert('Error', error.message);
     }
   };
 
-  // Handle OTP Matching with Hardcoded Exception
+  // Handle OTP Matching
   const verifyOTP = () => {
-    try {
-      if (!adminOTP || !userOTP) {
-        throw new Error('Please enter both Admin and User OTPs.');
-      }
+    if (!adminOTP || !userOTP) {
+      Alert.alert('Error', 'Please enter both Admin and User OTPs.');
+      return;
+    }
 
-      if (adminOTP !== userOTP) {
-        throw new Error('OTP mismatch detected.');
-      }
-
+    if (adminOTP !== userOTP) {
+      // Log or report the issue
+      console.error('OTP Mismatch: Admin OTP does not match User OTP.');
+      Alert.alert('Error', 'OTP mismatch detected. Please try again.');
+    } else {
       Alert.alert('Success', 'OTP verified successfully.');
-    } catch (error) {
-      console.error('OTP Verification Error:', error.message);
-      Alert.alert('Error', error.message);
     }
   };
 
-  // Monitor System with Hardcoded Exception
+  // Monitor and Alert for System Events
   const monitorSystem = () => {
-    try {
-      if (!emulator) {
-        throw new Error('Emulator not initialized. Please initialize first.');
-      }
+    if (!emulator) {
+      Alert.alert('Error', 'Emulator not initialized. Please initialize first.');
+      return;
+    }
 
-      const lockedCompartments = status.filter(compartment => compartment.locked);
-      if (lockedCompartments.length === 0) {
-        throw new Error('All compartments are unlocked. Ensure proper security.');
-      }
+    const lockedCompartments = status.filter(compartment => compartment.locked);
+    if (lockedCompartments.length === 0) {
+      Alert.alert('Monitoring Alert', 'All compartments are unlocked. Ensure proper security.');
+    }
 
-      const occupiedCompartments = status.filter(compartment => compartment.occupied);
-      if (occupiedCompartments.length === 0) {
-        throw new Error('No compartments are occupied. Ensure proper usage.');
-      }
-
-      Alert.alert('Monitoring Alert', 'System monitoring completed successfully.');
-    } catch (error) {
-      console.error('Monitoring Error:', error.message);
-      Alert.alert('Error', error.message);
+    const occupiedCompartments = status.filter(compartment => compartment.occupied);
+    if (occupiedCompartments.length === 0) {
+      Alert.alert('Monitoring Alert', 'No compartments are occupied. Ensure proper usage.');
     }
   };
 
