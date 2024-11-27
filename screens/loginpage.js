@@ -14,7 +14,7 @@ const Login = ({ navigation }) => {
 
     const handleLogin = () => {
         if (email === 'masudsajid38@gmail.com' && password === 'masud111') {
-            console.log("Go to main page")
+            navigation.navigate('getOTP'); 
         } else {
             Alert.alert("Error", "Invalid email or password.");
         }
