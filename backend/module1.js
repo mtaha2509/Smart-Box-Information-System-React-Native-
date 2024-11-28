@@ -23,7 +23,7 @@ async function checkUserAndOrder(userId, orderId) {
     if (!order) {
       return { valid: false, message: "Order not found" };
     }
-    if (order.state != "finalized") {
+    if (order.status != "finalized") {
       return { valid: false, message: "Order is not finalized yet by rider" };
     }
     // If everything good, return valid
@@ -118,7 +118,7 @@ app.post("/transitionToTransit", async (req, res) => {
       return res.status(404).send({ message: "Order not found" });
     }
 
-    if (order.state === "initial_state") {
+    if (order.status === "initial_state") {
       const rider = await Rider.findById(rider_id).session(session);
       if (!rider) {
         await session.abortTransaction();
@@ -127,7 +127,7 @@ app.post("/transitionToTransit", async (req, res) => {
       }
 
       // Update the order and rider atomically
-      order.state = "in_transit";
+      order.status = "in_transit";
       order.rider_id = rider_id;
       await order.save({ session });
 
@@ -139,7 +139,7 @@ app.post("/transitionToTransit", async (req, res) => {
       session.endSession();
 
       return res.status(200).send({ message: "Order transitioned to transit" });
-    } else if (order.state === "in_transit") {
+    } else if (order.status === "in_transit") {
       await session.abortTransaction();
       session.endSession();
       return res.status(400).send({ message: "Order already in transit" });
@@ -155,7 +155,7 @@ app.post("/transitionToTransit", async (req, res) => {
 });
 
 
-// This API will receive a request from the Rider's UI and req will contain rider's id plus specific order id, after that then the order state will change to finalized and the order will be removed from the queue of rider named assigned orders. 
+// This API will receive a request from the Rider's UI and req will contain rider's id plus specific order id, after that then the order status will change to finalized and the order will be removed from the queue of rider named assigned orders. 
 
 app.post("/finalize-order", async (req, res) => {
   const { rider_id, order_id } = req.body;
@@ -181,7 +181,7 @@ app.post("/finalize-order", async (req, res) => {
     }
 
     // Update the order state to "finalized"
-    order.state = "finalized";
+    order.status = "finalized";
     await order.save();
 
     // Remove the order ID from the rider's orders_assigned list
@@ -199,6 +199,8 @@ app.post("/finalize-order", async (req, res) => {
       .json({ error: "An internal server error occurred. Please try again." });
   }
 });
-
+app.get('/' , async (req,res)=>{
+  res.send("Welcome to the API")
+})
 
 app.listen(process.env.PORT);
