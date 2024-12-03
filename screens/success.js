@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 const Success = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.successText}>Your Rider is on its way!!!</Text>
+      <Text style={styles.successText}>You may recieve your parcel!!!</Text>
     </View>
   );
 };

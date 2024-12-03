@@ -8,6 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import GenerateOTP from './screens/getOTP';
 import Success from './screens/success';
 import EnterOTP from './screens/enterOTP';
+import OrdersPage from './screens/ordersPage';
 
 const Stack = createStackNavigator();
 
@@ -20,6 +21,7 @@ export default function App() {
         <Stack.Screen name='getOTP' component={GenerateOTP} />
         <Stack.Screen name="EnterOTP" component={EnterOTP} />
         <Stack.Screen name="Success" component={Success} />
+        <Stack.Screen name='myOrders' component={OrdersPage} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>

@@ -24,6 +24,7 @@ const orderSchema = new mongoose.Schema(
       index: true,
     },
     location: { type: String, default: null },
+    received: { type: Boolean, default: false }
   },
   { timestamps: true }
 );

@@ -3,12 +3,15 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
+    email: {type: String, required: true},
     contact: {
       type: String,
       required: true,
       unique: true,
-      match: {
-        validator: /^\d{10}$/, // phone numbers must be 10-digit
+      validate: {
+        validator: function(v) {
+          return /^\d{10}$/.test(v); // Check if the contact is exactly 10 digits
+        },// phone numbers must be 10-digit
         message: "Phone number must be a 10-digit number."
       }
     },
